@@ -1,10 +1,18 @@
 'use client';
 
 import { useState, useEffect, useRef, FormEvent } from 'react';
-import { Send, Loader2, Menu, X } from 'lucide-react';
+import { Send, Loader2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import FileExplorer from './FileExplorer';
 import { FileTreeNode } from '@/lib/markdown';
+import {
+  SidebarProvider,
+  SidebarOverlay,
+  SidebarContainer,
+  SidebarHeader,
+  MobileHeader,
+  useSidebar,
+} from './MobileSidebar';
 
 interface Message {
   id: string;
@@ -16,19 +24,17 @@ interface ChatInterfaceProps {
   fileTree: FileTreeNode[];
 }
 
-export default function ChatInterface({ fileTree }: ChatInterfaceProps) {
+// Inner component that uses sidebar context
+function ChatInterfaceContent({ fileTree }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { close: closeSidebar } = useSidebar();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
-
-  // Close sidebar on route change (for mobile)
-  const closeSidebar = () => setSidebarOpen(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -117,59 +123,22 @@ export default function ChatInterface({ fileTree }: ChatInterfaceProps) {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
-          onClick={closeSidebar}
-          aria-hidden="true"
-        />
-      )}
+      <SidebarOverlay />
 
-      {/* Sidebar */}
-      <aside
-        className={`
-          fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200 flex flex-col
-          transform transition-transform duration-300 ease-in-out
-          md:relative md:translate-x-0 md:w-64 md:flex-shrink-0
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        `}
-      >
-        {/* Mobile header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 md:hidden">
-          <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Files</h2>
-          <button
-            onClick={closeSidebar}
-            className="flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 hover:bg-gray-100"
-            aria-label="Close sidebar"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
+      <SidebarContainer>
+        <SidebarHeader />
         {/* Desktop header */}
         <div className="hidden md:block p-4 border-b border-gray-200">
           <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Files</h2>
         </div>
-
         <FileExplorer tree={fileTree} onFileClick={closeSidebar} />
-      </aside>
+      </SidebarContainer>
 
       {/* Main content */}
       <main className="flex-1 flex flex-col min-w-0">
         {hasMessages ? (
           <>
-            {/* Mobile header with menu button */}
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-200 bg-white md:hidden">
-              <button
-                onClick={() => setSidebarOpen(true)}
-                className="flex items-center justify-center w-10 h-10 rounded-lg text-gray-600 hover:bg-gray-100"
-                aria-label="Open menu"
-              >
-                <Menu className="w-5 h-5" />
-              </button>
-              <span className="font-medium text-gray-900">MemoryBench</span>
-            </div>
+            <MobileHeader title="MemoryBench" />
 
             {/* Messages view - input at bottom */}
             <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-4 sm:py-8">
@@ -252,17 +221,7 @@ export default function ChatInterface({ fileTree }: ChatInterfaceProps) {
         ) : (
           /* Empty state - centered input */
           <div className="flex-1 flex flex-col">
-            {/* Mobile header */}
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-200 bg-white md:hidden">
-              <button
-                onClick={() => setSidebarOpen(true)}
-                className="flex items-center justify-center w-10 h-10 rounded-lg text-gray-600 hover:bg-gray-100"
-                aria-label="Open menu"
-              >
-                <Menu className="w-5 h-5" />
-              </button>
-              <span className="font-medium text-gray-900">MemoryBench</span>
-            </div>
+            <MobileHeader title="MemoryBench" />
 
             <div className="flex-1 flex flex-col items-center justify-center px-4">
               <div className="w-full max-w-2xl text-center">
@@ -305,5 +264,14 @@ export default function ChatInterface({ fileTree }: ChatInterfaceProps) {
         )}
       </main>
     </div>
+  );
+}
+
+// Main component with provider wrapper
+export default function ChatInterface({ fileTree }: ChatInterfaceProps) {
+  return (
+    <SidebarProvider>
+      <ChatInterfaceContent fileTree={fileTree} />
+    </SidebarProvider>
   );
 }
