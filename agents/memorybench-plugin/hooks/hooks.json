@@ -1,0 +1,22 @@
+{
+  "hooks": [
+    {
+      "name": "pre-save-memory",
+      "trigger": "before_memory_save",
+      "script": "./scripts/parse-memory.py",
+      "enabled": true
+    },
+    {
+      "name": "post-save-memory",
+      "trigger": "after_memory_save",
+      "script": "./scripts/index-memory.js",
+      "enabled": true
+    },
+    {
+      "name": "on-query",
+      "trigger": "on_search_query",
+      "script": "./scripts/enhance-query.py",
+      "enabled": true
+    }
+  ]
+}

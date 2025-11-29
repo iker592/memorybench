@@ -1,0 +1,16 @@
+{
+  "name": "memorybench-plugin",
+  "version": "1.0.0",
+  "description": "Core plugin for MemoryBench personal knowledge base",
+  "author": "Iker Redondo",
+  "permissions": [
+    "read",
+    "write",
+    "memory"
+  ],
+  "entrypoints": {
+    "commands": "./commands",
+    "agents": "./agents",
+    "skills": "./skills"
+  }
+}

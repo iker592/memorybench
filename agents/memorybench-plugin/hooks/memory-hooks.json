@@ -1,0 +1,29 @@
+{
+  "memory_hooks": [
+    {
+      "name": "auto-tag",
+      "trigger": "on_memory_create",
+      "action": "generate_tags",
+      "enabled": true
+    },
+    {
+      "name": "auto-link",
+      "trigger": "on_memory_create",
+      "action": "find_related_memories",
+      "enabled": true
+    },
+    {
+      "name": "dedupe-check",
+      "trigger": "before_memory_save",
+      "action": "check_duplicates",
+      "enabled": true
+    },
+    {
+      "name": "backup",
+      "trigger": "on_memory_update",
+      "action": "create_version_backup",
+      "enabled": true
+    }
+  ]
+}
+

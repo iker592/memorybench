@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "memorybench": {
+      "command": "node",
+      "args": ["./scripts/index-memory.js"],
+      "env": {
+        "NODE_ENV": "production",
+        "MEMORY_INDEX_PATH": "./data/index"
+      }
+    }
+  }
+}

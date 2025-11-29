@@ -1,0 +1,23 @@
+{
+  "hooks": [
+    {
+      "name": "pre-save",
+      "trigger": "before_save",
+      "script": "./scripts/format-code.py",
+      "enabled": true
+    },
+    {
+      "name": "post-save",
+      "trigger": "after_save",
+      "script": "./scripts/security-scan.sh",
+      "enabled": true
+    },
+    {
+      "name": "pre-deploy",
+      "trigger": "before_deploy",
+      "script": "./scripts/deploy.js",
+      "enabled": true
+    }
+  ]
+}
+

@@ -1,0 +1,17 @@
+{
+  "name": "enterprise-plugin",
+  "version": "1.0.0",
+  "description": "Plugin for Enterprise knowledge base",
+  "author": "Iker Redondo",
+  "permissions": [
+    "read",
+    "write",
+    "execute"
+  ],
+  "entrypoints": {
+    "commands": "./commands",
+    "agents": "./agents",
+    "skills": "./skills"
+  }
+}
+
