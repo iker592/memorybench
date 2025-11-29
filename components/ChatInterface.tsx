@@ -102,6 +102,8 @@ export default function ChatInterface({ fileTree }: ChatInterfaceProps) {
     }
   }
 
+  const hasMessages = messages.length > 0;
+
   return (
     <div className="flex h-screen bg-gray-50">
       <aside className="w-64 border-r border-gray-200 bg-white flex-shrink-0 flex flex-col">
@@ -112,20 +114,11 @@ export default function ChatInterface({ fileTree }: ChatInterfaceProps) {
       </aside>
 
       <main className="flex-1 flex flex-col">
-        <div className="flex-1 overflow-y-auto px-4 py-8">
-          <div className="mx-auto max-w-2xl">
-            {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full min-h-[60vh] text-center">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mb-6 shadow-lg">
-                  <span className="text-2xl text-white">💭</span>
-                </div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome to My Memory</h1>
-                <p className="text-gray-500 max-w-md">
-                  Ask me anything about your notes, or let me help you organize your thoughts.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-6">
+        {hasMessages ? (
+          <>
+            {/* Messages view - input at bottom */}
+            <div className="flex-1 overflow-y-auto px-4 py-8">
+              <div className="mx-auto max-w-2xl space-y-6">
                 {messages.map((message) => (
                   <div
                     key={message.id}
@@ -172,36 +165,75 @@ export default function ChatInterface({ fileTree }: ChatInterfaceProps) {
                 )}
                 <div ref={messagesEndRef} />
               </div>
-            )}
-          </div>
-        </div>
-
-        <div className="border-t border-gray-200 bg-white px-4 py-4">
-          <form onSubmit={handleSubmit} className="mx-auto max-w-2xl">
-            <div className="flex items-center gap-3 rounded-xl border border-gray-300 bg-gray-50 px-4 py-2 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your message..."
-                className="flex-1 bg-transparent text-gray-900 placeholder-gray-400 focus:outline-none text-sm"
-                disabled={isLoading}
-              />
-              <button
-                type="submit"
-                disabled={isLoading || !input.trim()}
-                className="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {isLoading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Send className="w-4 h-4" />
-                )}
-              </button>
             </div>
-            <p className="mt-2 text-xs text-gray-400 text-center">Powered by Claude AI</p>
-          </form>
-        </div>
+
+            {/* Input at bottom */}
+            <div className="border-t border-gray-200 bg-white px-4 py-4">
+              <form onSubmit={handleSubmit} className="mx-auto max-w-2xl">
+                <div className="flex items-center gap-3 rounded-xl border border-gray-300 bg-gray-50 px-4 py-2 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Type your message..."
+                    className="flex-1 bg-transparent text-gray-900 placeholder-gray-400 focus:outline-none text-sm"
+                    disabled={isLoading}
+                  />
+                  <button
+                    type="submit"
+                    disabled={isLoading || !input.trim()}
+                    className="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </>
+        ) : (
+          /* Empty state - centered input */
+          <div className="flex-1 flex flex-col items-center justify-center px-4">
+            <div className="w-full max-w-2xl text-center">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mb-8 shadow-lg mx-auto">
+                <span className="text-3xl text-white">💭</span>
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-3">Welcome to My Memory</h1>
+              <p className="text-gray-500 mb-10 text-lg">
+                Ask me anything about your notes, or let me help you organize your thoughts.
+              </p>
+              
+              <form onSubmit={handleSubmit} className="w-full">
+                <div className="flex items-center gap-3 rounded-2xl border border-gray-300 bg-white px-5 py-4 shadow-lg focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Ask anything..."
+                    className="flex-1 bg-transparent text-gray-900 placeholder-gray-400 focus:outline-none text-base"
+                    disabled={isLoading}
+                    autoFocus
+                  />
+                  <button
+                    type="submit"
+                    disabled={isLoading || !input.trim()}
+                    className="flex items-center justify-center w-11 h-11 rounded-xl bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <Send className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+                <p className="mt-4 text-sm text-gray-400">Powered by Claude AI</p>
+              </form>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
