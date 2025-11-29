@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, FormEvent } from 'react';
 import { Send, Loader2 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import FileExplorer from './FileExplorer';
 import { FileTreeNode } from '@/lib/markdown';
 
@@ -137,8 +138,27 @@ export default function ChatInterface({ fileTree }: ChatInterfaceProps) {
                           : 'bg-white border border-gray-200 text-gray-900 shadow-sm'
                       }`}
                     >
-                      <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                        {message.content}
+                      <div className="text-sm leading-relaxed">
+                        {message.role === 'assistant' ? (
+                          <ReactMarkdown
+                            components={{
+                              h1: ({ children }) => <h1 className="text-xl font-bold mt-3 mb-2">{children}</h1>,
+                              h2: ({ children }) => <h2 className="text-lg font-bold mt-2 mb-1">{children}</h2>,
+                              h3: ({ children }) => <h3 className="text-base font-bold mt-2 mb-1">{children}</h3>,
+                              p: ({ children }) => <p className="mb-2">{children}</p>,
+                              ul: ({ children }) => <ul className="list-disc list-inside mb-2 ml-2">{children}</ul>,
+                              ol: ({ children }) => <ol className="list-decimal list-inside mb-2 ml-2">{children}</ol>,
+                              li: ({ children }) => <li className="mb-1">{children}</li>,
+                              strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                              code: ({ children }) => <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">{children}</code>,
+                              pre: ({ children }) => <pre className="bg-gray-100 p-2 rounded overflow-x-auto mb-2 text-xs">{children}</pre>,
+                            }}
+                          >
+                            {message.content}
+                          </ReactMarkdown>
+                        ) : (
+                          <span className="whitespace-pre-wrap">{message.content}</span>
+                        )}
                       </div>
                     </div>
                   </div>
